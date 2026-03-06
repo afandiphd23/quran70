@@ -1,0 +1,577 @@
+import React, { useRef, useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Book, Info, Search, Heart, ExternalLink, List, X, Loader2, Play, Pause, Sparkles, Volume2 } from 'lucide-react';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+import { QURAN_WORD_VERSES, type VerseReference } from './constants';
+
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+interface VerseData {
+  arabic: string;
+  translation: string;
+  surahName: string;
+  surah: number;
+  ayah: number;
+  audioUrl?: string;
+}
+
+export default function App() {
+  const versesRef = useRef<HTMLElement>(null);
+  const [selectedVerse, setSelectedVerse] = useState<VerseReference | null>(null);
+  const [verseData, setVerseData] = useState<VerseData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const scrollToVerses = (e: React.MouseEvent) => {
+    e.preventDefault();
+    versesRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSelectedVerse(null);
+    };
+    if (selectedVerse) {
+      window.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden';
+      fetchVerse(selectedVerse);
+    } else {
+      setVerseData(null);
+      setError(null);
+      setIsPlaying(false);
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      window.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedVerse]);
+
+  const fetchVerse = async (verse: VerseReference) => {
+    setIsLoading(true);
+    setError(null);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+    try {
+      const verseKey = `${verse.surah}:${verse.ayah}`;
+
+      // Request Malay (39) and English (131) translations, plus audio (7 = Mishary Alafasy)
+      const response = await fetch(
+        `https://api.quran.com/api/v4/verses/by_key/${verseKey}?translations=39,131&audio=7&fields=text_uthmani`,
+        { signal: controller.signal }
+      );
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`Server responded with ${response.status}. Please try again.`);
+      }
+
+      const json = await response.json();
+      const verseObj = json?.verse;
+
+      if (!verseObj) {
+        throw new Error('Verse data not found in the response.');
+      }
+
+      const arabicText = verseObj.text_uthmani;
+      // Find Malay translation (ID 39) or fallback to English (ID 131)
+      const malayTrans = verseObj.translations?.find((t: any) => t.resource_id === 39)?.text;
+      const englishTrans = verseObj.translations?.find((t: any) => t.resource_id === 131)?.text;
+
+      const translationText = malayTrans || englishTrans;
+
+      if (!arabicText) {
+        throw new Error('Arabic text is currently unavailable.');
+      }
+
+      setVerseData({
+        arabic: arabicText,
+        translation: translationText
+          ? translationText.replace(/<[^>]*>?/gm, '')
+          : 'Terjemahan tidak tersedia untuk ayat ini.',
+        surahName: verse.surahName,
+        surah: verse.surah,
+        ayah: verse.ayah,
+        audioUrl: verseObj.audio?.url ? `https://verses.quran.com/${verseObj.audio.url}` : undefined
+      });
+    } catch (err) {
+      clearTimeout(timeoutId);
+      console.error('Error fetching verse:', err);
+
+      if (err instanceof Error && err.name === 'AbortError') {
+        setError('Permintaan tamat masa. Sila semak sambungan anda.');
+      } else {
+        setError(err instanceof Error ? err.message : 'Ralat tidak dijangka berlaku. Sila cuba lagi.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const toggleAudio = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  // Helper to highlight the word "Quran" in Arabic
+  const highlightQuran = (text: string) => {
+    // Common forms of "Quran" in Arabic: القرآن, قرآن, بالقرآن, للقرآن
+    const quranWords = ['القرآن', 'قرآن', 'بالقرآن', 'للقرآن'];
+    let highlighted = text;
+
+    // We use a span with a specific color for the word Quran
+    quranWords.forEach(word => {
+      const regex = new RegExp(word, 'g');
+      highlighted = highlighted.replace(regex, `<span class="text-gold font-bold drop-shadow-[0_0_16px_rgba(212,168,67,0.6)]" style="text-shadow: 0 0 20px rgba(212,168,67,0.3)">${word}</span>`);
+    });
+
+    return <div dangerouslySetInnerHTML={{ __html: highlighted }} />;
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col selection:bg-gold/30">
+      {/* Navigation */}
+      <nav className="nav-glass p-5 md:px-8 flex justify-between items-center sticky top-0 z-40">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-lg shadow-deep-green/20 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #0A4D38, #13755A)' }}>
+            <Book className="w-4 h-4 text-parchment relative z-10" />
+            <div className="absolute inset-0 shimmer" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-xs uppercase tracking-[0.2em] font-sans font-bold text-stone-800">
+              Al-Qur'an Explorer
+            </span>
+            <span className="text-[8px] uppercase tracking-[0.3em] font-sans text-gold-dark/60">by DrFendi Ameen</span>
+          </div>
+        </div>
+        <div className="hidden md:flex gap-10 text-[10px] uppercase tracking-[0.2em] font-sans font-bold text-stone-400">
+          <a href="#" className="hover:text-gold transition-all duration-300 hover:tracking-[0.3em] relative group">Perkataan<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold group-hover:w-full transition-all duration-300 rounded-full" /></a>
+          <a href="#verses" onClick={scrollToVerses} className="hover:text-gold transition-all duration-300 hover:tracking-[0.3em] relative group">Kemunculan<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold group-hover:w-full transition-all duration-300 rounded-full" /></a>
+          <a href="#" className="hover:text-gold transition-all duration-300 hover:tracking-[0.3em] relative group">Kepentingan<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold group-hover:w-full transition-all duration-300 rounded-full" /></a>
+        </div>
+      </nav>
+
+      <main className="flex-1 flex flex-col">
+        {/* Hero Section */}
+        <section className="min-h-[90vh] flex flex-col items-center justify-center p-8 text-center relative overflow-hidden">
+          {/* Background Decorative Orbs */}
+          <div className="hero-orb absolute top-[10%] left-[15%] w-[600px] h-[600px] bg-gold animate-pulse" />
+          <div className="hero-orb absolute bottom-[15%] right-[10%] w-[500px] h-[500px] bg-deep-green" />
+          <div className="hero-orb absolute top-[50%] right-[40%] w-[300px] h-[300px] bg-emerald-glow opacity-[0.05]" />
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+            className="space-y-10 relative z-10"
+          >
+            <div className="space-y-5">
+              <motion.span
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-emerald-soft/80 backdrop-blur-sm border border-deep-green/10 text-[10px] uppercase tracking-[0.4em] font-sans font-bold text-deep-green shadow-sm"
+              >
+                <Sparkles className="w-3 h-3" />
+                Bacaan Suci
+              </motion.span>
+              <h1 className="text-8xl md:text-[11rem] font-display font-black tracking-tighter leading-none">
+                <span className="gradient-text">Quran</span>
+              </h1>
+            </div>
+
+            {/* Decorative ornament */}
+            <div className="flex items-center justify-center gap-4">
+              <div className="ornament-line w-16" />
+              <div className="glow-dot animate-glow-pulse" />
+              <div className="ornament-line w-16" />
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 1.5 }}
+              className="font-arabic text-7xl md:text-[9rem] text-deep-green py-4 animate-float" style={{ textShadow: '0 8px 40px rgba(10,77,56,0.15)' }}
+            >
+              القرآن
+            </motion.div>
+
+            <div className="max-w-xl mx-auto space-y-8">
+              <p className="text-xl md:text-2xl italic text-stone-600 leading-relaxed font-serif text-balance">
+                "Perkataan Arab <span className="font-arabic not-italic text-deep-green font-bold">القرآن</span> — bermaksud 'Bacaan' — muncul tepat <span className="gradient-text font-display font-bold text-3xl not-italic">70</span> kali dalam Teks Suci."
+              </p>
+
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={scrollToVerses}
+                className="btn-primary shadow-xl shadow-deep-green/15"
+              >
+                ✦ Teroka Kemunculan
+              </motion.button>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2, duration: 1 }}
+            className="absolute bottom-12 left-1/2 -translate-x-1/2"
+          >
+            <div className="flex flex-col items-center gap-3">
+              <div className="glow-dot animate-glow-pulse" />
+              <div className="w-px h-20 bg-gradient-to-b from-gold/40 to-transparent" />
+            </div>
+          </motion.div>
+        </section>
+
+        {/* Verses Section */}
+        <section id="verses" ref={versesRef} className="bg-parchment-dark py-32 px-8 relative overflow-hidden">
+          {/* Section top divider */}
+          <div className="section-divider absolute top-0 left-0 right-0" />
+
+          <div className="max-w-7xl mx-auto space-y-24">
+            <div className="text-center space-y-6">
+              <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/70 backdrop-blur-sm border border-stone-200/60 shadow-card">
+                <div className="glow-dot animate-glow-pulse" style={{ width: '8px', height: '8px' }} />
+                <span className="text-[10px] uppercase tracking-[0.3em] font-sans font-bold text-stone-500">Kronik Bacaan</span>
+              </div>
+              <h2 className="text-6xl md:text-7xl font-display font-bold tracking-tight"><span className="gradient-text">70 Kemunculan</span></h2>
+              <p className="text-stone-500 max-w-2xl mx-auto text-lg italic leading-relaxed">
+                Koleksi susunan setiap kejadian di mana perkataan "Quran" disebut secara jelas, mendedahkan kepentingan konteksnya di sepanjang wahyu.
+              </p>
+              {/* Ornament */}
+              <div className="flex items-center justify-center gap-3 pt-2">
+                <div className="ornament-line w-12" />
+                <div className="w-1.5 h-1.5 rounded-full bg-gold/40" />
+                <div className="ornament-line w-12" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
+              {QURAN_WORD_VERSES.map((verse, idx) => {
+                const isSelected = selectedVerse?.surah === verse.surah && selectedVerse?.ayah === verse.ayah;
+                return (
+                  <motion.button
+                    key={`${verse.surah}-${verse.ayah}`}
+                    onClick={() => setSelectedVerse(verse)}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    whileHover={{ y: -4, scale: 1.02 }}
+                    transition={{ delay: (idx % 10) * 0.04 }}
+                    className={cn(
+                      "group verse-card",
+                      isSelected && "selected"
+                    )}
+                  >
+                    {/* Decorative background number */}
+                    <div className="absolute -right-2 -bottom-4 text-8xl font-display font-black text-stone-100/40 group-hover:text-gold/8 transition-colors duration-500 pointer-events-none">
+                      {idx + 1}
+                    </div>
+
+                    {/* Shimmer overlay on hover */}
+                    <div className="absolute inset-0 shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+
+                    <div className="flex justify-between items-start relative z-10">
+                      <div className={cn(
+                        "w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-sans font-bold transition-all duration-300",
+                        isSelected ? "text-white shadow-md" : "bg-stone-100/80 text-stone-400 group-hover:text-gold"
+                      )} style={isSelected ? { background: 'linear-gradient(135deg, #D4A843, #A07B1A)' } : {}}>
+                        {String(idx + 1).padStart(2, '0')}
+                      </div>
+                      <div className={cn(
+                        "w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300",
+                        isSelected ? "bg-gold/10" : "group-hover:bg-gold/10"
+                      )}>
+                        <Search className={cn(
+                          "w-3.5 h-3.5 transition-colors duration-300",
+                          isSelected ? "text-gold" : "text-stone-300 group-hover:text-gold"
+                        )} />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5 relative z-10">
+                      <div className={cn(
+                        "text-lg font-display font-bold transition-colors duration-300 leading-tight",
+                        isSelected ? "text-stone-900" : "text-stone-800 group-hover:text-stone-900"
+                      )}>
+                        {verse.surahName}
+                      </div>
+                      <div className="text-[10px] uppercase tracking-widest font-sans font-bold text-stone-400 group-hover:text-gold/70 transition-colors duration-300">
+                        Ayat {verse.surah}:{verse.ayah}
+                      </div>
+                    </div>
+                  </motion.button>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* Info Section */}
+        <section className="bg-white py-32 px-8 relative overflow-hidden">
+          {/* Section divider */}
+          <div className="section-divider absolute top-0 left-0 right-0" />
+
+          {/* Subtle geometric pattern background */}
+          <div className="absolute inset-0 opacity-[0.015] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#0A4D38 1px, transparent 1px)', backgroundSize: '50px 50px' }} />
+
+          <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-24 items-center">
+            <div className="space-y-10">
+              <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-emerald-soft/80 backdrop-blur-sm border border-deep-green/10 shadow-card">
+                <Info className="w-4 h-4 text-deep-green" />
+                <span className="text-[10px] uppercase tracking-[0.3em] font-sans font-bold text-deep-green">Wawasan Linguistik</span>
+              </div>
+              <h2 className="text-5xl md:text-6xl font-display font-bold tracking-tight leading-tight"><span className="gradient-text">Etimologi & Makna Ketuhanan</span></h2>
+              <div className="space-y-6 text-lg text-stone-600 leading-relaxed font-serif">
+                <p>
+                  Perkataan <span className="font-bold text-stone-900 border-b-2 border-gold/30">Quran</span> berasal dari kata akar Arab <span className="font-arabic text-2xl text-deep-green bg-emerald-soft/80 px-3 py-1 rounded-lg border border-deep-green/10">ق-ر-أ</span> (q-r-'), yang membawa makna mendalam iaitu "membaca" atau "bacaan".
+                </p>
+                <p>
+                  Ia merupakan kata nama terbitan (masdar) daripada kata kerja <span className="font-arabic text-2xl text-deep-green">قرأ</span> (qara'a), yang menandakan bukan sekadar sebuah buku, tetapi bacaan yang berterusan dan hidup.
+                </p>
+                <p className="italic border-l-2 border-gold/30 pl-6 py-2">
+                  Dalam tradisi Islam, ia merujuk kepada firman harfiah Allah yang diturunkan kepada Nabi Muhammad (SAW), terpelihara dalam kefasihan Arab asalnya selama lebih empat belas abad.
+                </p>
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="absolute -inset-6 rounded-[3rem] -z-10" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(212,168,67,0.1), transparent 70%)' }} />
+              <div className="glass-card rounded-[2.5rem] p-16 text-center space-y-8 relative overflow-hidden">
+                {/* Decorative background dots */}
+                <div className="absolute inset-0 opacity-[0.04] pointer-events-none">
+                  <div className="grid grid-cols-10 gap-4 p-8">
+                    {Array.from({ length: 70 }).map((_, i) => (
+                      <div key={i} className="w-1.5 h-1.5 bg-deep-green rounded-full" />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-5 relative z-10">
+                  <motion.div
+                    initial={{ scale: 0.8 }}
+                    whileInView={{ scale: 1 }}
+                    className="text-8xl md:text-9xl font-display font-black" style={{ background: 'linear-gradient(180deg, #0A4D38 20%, #D4A843 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.06))' }}
+                  >
+                    70
+                  </motion.div>
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="ornament-line w-8" />
+                    <div className="text-xs uppercase tracking-[0.5em] text-gold font-sans font-black">Jumlah Sebutan</div>
+                    <div className="ornament-line w-8" />
+                  </div>
+                  <p className="text-stone-500 max-w-[280px] mx-auto leading-relaxed italic">
+                    Istilah khusus ini muncul kira-kira tujuh puluh kali di seluruh teks, setiap kejadian menambah lapisan kedalaman kepada identitinya.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Call to Action / Footer */}
+        <footer className="py-24 px-8 text-center bg-parchment-dark relative overflow-hidden">
+          {/* Section divider */}
+          <div className="section-divider absolute top-0 left-0 right-0" />
+
+          {/* Subtle orb */}
+          <div className="hero-orb absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-gold opacity-[0.03]" />
+
+          <div className="max-w-md mx-auto space-y-10 relative z-10">
+            <div className="flex justify-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-white/70 backdrop-blur-sm border border-stone-200/60 flex items-center justify-center shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300">
+                <Book className="w-5 h-5 text-gold" />
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-white/70 backdrop-blur-sm border border-stone-200/60 flex items-center justify-center shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300">
+                <Heart className="w-5 h-5 text-deep-green" />
+              </div>
+            </div>
+
+            {/* Ornament */}
+            <div className="flex items-center justify-center gap-3">
+              <div className="ornament-line w-10" />
+              <div className="w-1.5 h-1.5 rounded-full bg-gold/30" />
+              <div className="ornament-line w-10" />
+            </div>
+
+            <div className="space-y-4">
+              <p className="text-xs uppercase tracking-[0.4em] font-sans font-black text-stone-400">
+                Peneroka Al-Qur'an &copy; 2026
+              </p>
+              <p className="text-sm text-stone-500 italic font-serif text-balance">
+                Tempat perlindungan digital untuk meneroka keindahan linguistik Wahyu Terakhir.
+              </p>
+              <p className="text-xs text-stone-400 mt-6 font-sans">
+                Developed by <span className="font-bold text-stone-500">DrFendi Ameen</span>
+                <br />
+                <a href="mailto:afandi.amin@customs.gov.my" className="hover:text-gold transition-colors duration-300">afandi.amin@customs.gov.my</a>
+              </p>
+            </div>
+          </div>
+        </footer>
+      </main>
+
+      {/* Verse Detail Modal */}
+      <AnimatePresence>
+        {selectedVerse && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedVerse(null)}
+              className="absolute inset-0 bg-midnight/50 backdrop-blur-md cursor-pointer"
+            />
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-2xl max-h-[90vh] modal-glass rounded-3xl shadow-2xl overflow-y-auto border border-stone-200/60 z-10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex flex-col h-full">
+                {/* Sticky Header */}
+                <div className="sticky top-0 z-20 px-6 py-4 sm:px-10 sm:py-6 flex justify-between items-center" style={{ background: 'linear-gradient(180deg, rgba(251,249,244,0.95), rgba(251,249,244,0.8))', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(212,168,67,0.1)' }}>
+                  <div className="space-y-0.5">
+                    <h3 className="text-2xl font-display font-bold text-stone-900 leading-tight">{selectedVerse.surahName}</h3>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-stone-400 font-sans font-black">
+                      Ayat {selectedVerse.surah}:{selectedVerse.ayah}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setSelectedVerse(null)}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl bg-stone-100 border border-stone-200 hover:bg-stone-200 transition-all active:scale-95 group shadow-sm"
+                    aria-label="Tutup"
+                  >
+                    <span className="text-[10px] uppercase tracking-widest font-sans font-bold text-stone-600">Tutup</span>
+                    <X className="w-4 h-4 text-stone-600 group-hover:text-stone-900" />
+                  </button>
+                </div>
+
+                <div className="p-6 sm:p-10 pt-4 sm:pt-6 space-y-8 flex-grow">
+                  {/* Content */}
+                  <div className="min-h-[200px] flex flex-col justify-center">
+                    {isLoading ? (
+                      <div className="flex flex-col items-center justify-center py-12 gap-4">
+                        <Loader2 className="w-8 h-8 text-gold animate-spin" />
+                        <span className="text-xs uppercase tracking-widest text-stone-400 font-sans">Mengambil bacaan...</span>
+                      </div>
+                    ) : error ? (
+                      <div className="text-center py-12 space-y-4">
+                        <p className="text-stone-500 italic">{error}</p>
+                        <button
+                          onClick={() => fetchVerse(selectedVerse)}
+                          className="text-xs uppercase tracking-widest font-sans font-bold text-gold hover:text-deep-green transition-colors"
+                        >
+                          Cuba Lagi
+                        </button>
+                      </div>
+                    ) : verseData ? (
+                      <div className="space-y-10 text-center">
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="font-arabic text-4xl sm:text-5xl leading-[1.8] text-deep-green dir-rtl"
+                        >
+                          {highlightQuran(verseData.arabic)}
+                        </motion.div>
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 0.3 }}
+                          className="text-lg sm:text-xl text-stone-600 italic font-serif leading-relaxed"
+                        >
+                          "{verseData.translation}"
+                        </motion.div>
+
+                        {verseData.audioUrl && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5 }}
+                            className="pt-6"
+                          >
+                            <button
+                              onClick={toggleAudio}
+                              className="play-btn"
+                            >
+                              {isPlaying ? (
+                                <>
+                                  <Pause className="w-5 h-5" />
+                                  <span className="text-xs uppercase tracking-widest font-sans font-bold">Jeda</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Play className="w-5 h-5 ml-1" />
+                                  <span className="text-xs uppercase tracking-widest font-sans font-bold">Mainkan</span>
+                                </>
+                              )}
+                            </button>
+                            <audio
+                              ref={audioRef}
+                              src={verseData.audioUrl}
+                              onPlay={() => setIsPlaying(true)}
+                              onPause={() => setIsPlaying(false)}
+                              onEnded={() => setIsPlaying(false)}
+                              className="hidden"
+                            />
+                          </motion.div>
+                        )}
+                      </div>
+                    ) : null}
+                  </div>
+
+                  {/* Modal Footer */}
+                  <div className="pt-6 border-t border-stone-200 flex justify-between items-center">
+                    <div className="flex gap-6">
+                      <button className="flex items-center gap-2 text-[10px] uppercase tracking-widest font-sans font-bold text-stone-400 hover:text-gold transition-colors">
+                        <Heart className="w-3 h-3" />
+                        Simpan
+                      </button>
+                      <button
+                        onClick={() => setSelectedVerse(null)}
+                        className="flex items-center gap-2 text-[10px] uppercase tracking-widest font-sans font-bold text-stone-400 hover:text-stone-900 transition-colors"
+                      >
+                        Tutup
+                      </button>
+                    </div>
+                    <a
+                      href={`https://quran.com/${selectedVerse.surah}/${selectedVerse.ayah}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-[10px] uppercase tracking-widest font-sans font-bold text-stone-400 hover:text-gold transition-colors"
+                    >
+                      Quran.com
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
