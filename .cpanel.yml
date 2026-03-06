@@ -1,5 +1,6 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/afandiphd/public_html/quran70/
+    - export DEPLOYPATH=/home12/kliacust/public_html/quran70/
+    - /bin/mkdir -p $DEPLOYPATH
     - /bin/cp -R dist/* $DEPLOYPATH
