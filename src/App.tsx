@@ -327,64 +327,143 @@ export default function App() {
           </div>
         </section>
 
-        {/* Info Section */}
+        {/* Info Section - Etimologi & Makna */}
         <section className="bg-white py-32 px-8 relative overflow-hidden">
           {/* Section divider */}
           <div className="section-divider absolute top-0 left-0 right-0" />
-
           {/* Subtle geometric pattern background */}
-          <div className="absolute inset-0 opacity-[0.015] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#0A4D38 1px, transparent 1px)', backgroundSize: '50px 50px' }} />
+          <div className="absolute inset-0 opacity-[0.012] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#0A4D38 1px, transparent 1px)', backgroundSize: '50px 50px' }} />
+          {/* Decorative orbs */}
+          <div className="hero-orb absolute top-[20%] right-[-5%] w-[500px] h-[500px] bg-gold opacity-[0.04]" />
+          <div className="hero-orb absolute bottom-[10%] left-[-5%] w-[400px] h-[400px] bg-deep-green opacity-[0.04]" />
 
-          <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-24 items-center">
-            <div className="space-y-10">
-              <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-emerald-soft/80 backdrop-blur-sm border border-deep-green/10 shadow-card">
-                <Info className="w-4 h-4 text-deep-green" />
-                <span className="text-[10px] uppercase tracking-[0.3em] font-sans font-bold text-deep-green">Wawasan Linguistik</span>
-              </div>
-              <h2 className="text-5xl md:text-6xl font-display font-bold tracking-tight leading-tight"><span className="gradient-text">Etimologi & Makna Ketuhanan</span></h2>
-              <div className="space-y-6 text-lg text-stone-600 leading-relaxed font-serif">
-                <p>
-                  Perkataan <span className="font-bold text-stone-900 border-b-2 border-gold/30">Quran</span> berasal dari kata akar Arab <span className="font-arabic text-2xl text-deep-green bg-emerald-soft/80 px-3 py-1 rounded-lg border border-deep-green/10">ق-ر-أ</span> (q-r-'), yang membawa makna mendalam iaitu "membaca" atau "bacaan".
-                </p>
-                <p>
-                  Ia merupakan kata nama terbitan (masdar) daripada kata kerja <span className="font-arabic text-2xl text-deep-green">قرأ</span> (qara'a), yang menandakan bukan sekadar sebuah buku, tetapi bacaan yang berterusan dan hidup.
-                </p>
-                <p className="italic border-l-2 border-gold/30 pl-6 py-2">
-                  Dalam tradisi Islam, ia merujuk kepada firman harfiah Allah yang diturunkan kepada Nabi Muhammad (SAW), terpelihara dalam kefasihan Arab asalnya selama lebih empat belas abad.
-                </p>
-              </div>
+          <div className="max-w-6xl mx-auto space-y-28">
+            {/* Section Header */}
+            <div className="text-center space-y-6">
+              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="space-y-6">
+                <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-emerald-soft/80 backdrop-blur-sm border border-deep-green/10 shadow-card">
+                  <Info className="w-4 h-4 text-deep-green" />
+                  <span className="text-[10px] uppercase tracking-[0.3em] font-sans font-bold text-deep-green">Wawasan Linguistik</span>
+                </div>
+                <h2 className="text-5xl md:text-7xl font-display font-bold tracking-tight leading-tight">
+                  <span className="gradient-text">Etimologi & Makna</span><br /><span className="gradient-text">Ketuhanan</span>
+                </h2>
+                <div className="flex items-center justify-center gap-3">
+                  <div className="ornament-line w-16" />
+                  <div className="glow-dot animate-glow-pulse" />
+                  <div className="ornament-line w-16" />
+                </div>
+              </motion.div>
             </div>
 
-            <div className="relative">
-              <div className="absolute -inset-6 rounded-[3rem] -z-10" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(212,168,67,0.1), transparent 70%)' }} />
-              <div className="glass-card rounded-[2.5rem] p-16 text-center space-y-8 relative overflow-hidden">
-                {/* Decorative background dots */}
-                <div className="absolute inset-0 opacity-[0.04] pointer-events-none">
-                  <div className="grid grid-cols-10 gap-4 p-8">
-                    {Array.from({ length: 70 }).map((_, i) => (
-                      <div key={i} className="w-1.5 h-1.5 bg-deep-green rounded-full" />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-5 relative z-10">
-                  <motion.div
-                    initial={{ scale: 0.8 }}
-                    whileInView={{ scale: 1 }}
-                    className="text-8xl md:text-9xl font-display font-black" style={{ background: 'linear-gradient(180deg, #0A4D38 20%, #D4A843 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.06))' }}
-                  >
-                    70
-                  </motion.div>
-                  <div className="flex items-center justify-center gap-3">
-                    <div className="ornament-line w-8" />
-                    <div className="text-xs uppercase tracking-[0.5em] text-gold font-sans font-black">Jumlah Sebutan</div>
-                    <div className="ornament-line w-8" />
-                  </div>
-                  <p className="text-stone-500 max-w-[280px] mx-auto leading-relaxed italic">
-                    Istilah khusus ini muncul kira-kira tujuh puluh kali di seluruh teks, setiap kejadian menambah lapisan kedalaman kepada identitinya.
+            {/* Arabic Root Word Section */}
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+              <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="space-y-8">
+                <div className="space-y-6 text-lg text-stone-600 leading-relaxed font-serif">
+                  <p>
+                    Perkataan <span className="font-bold text-stone-900 border-b-2 border-gold/30">Quran</span> berasal dari kata akar Arab yang membawa makna mendalam iaitu "membaca" atau "bacaan".
+                  </p>
+                  <p>
+                    Ia merupakan kata nama terbitan <span className="italic text-stone-500">(masdar)</span> daripada kata kerja <span className="font-arabic text-2xl text-deep-green">قرأ</span> <span className="text-stone-400">(qara'a)</span>, yang menandakan bukan sekadar sebuah buku, tetapi <span className="font-bold text-deep-green">bacaan yang berterusan dan hidup</span>.
+                  </p>
+                  <p className="italic border-l-2 border-gold/40 pl-6 py-3 rounded-r-xl" style={{ background: 'rgba(255,248,231,0.5)' }}>
+                    {"Dalam tradisi Islam, ia merujuk kepada firman harfiah Allah yang diturunkan kepada Nabi Muhammad ﷺ, terpelihara dalam kefasihan Arab asalnya selama lebih empat belas abad."}
                   </p>
                 </div>
+              </motion.div>
+
+              {/* Arabic Root Breakdown Card */}
+              <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }} className="relative">
+                <div className="absolute -inset-4 rounded-3xl -z-10" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(10,77,56,0.08), transparent 70%)' }} />
+                <div className="glass-card rounded-3xl p-10 space-y-8 relative overflow-hidden">
+                  <div className="absolute inset-0 shimmer pointer-events-none" />
+                  <div className="text-center space-y-3 relative z-10">
+                    <div className="text-[10px] uppercase tracking-[0.4em] font-sans font-bold text-gold">Kata Akar Arab</div>
+                    <div className="ornament-line w-20 mx-auto" />
+                  </div>
+                  {/* Root letters */}
+                  <div className="flex justify-center items-center gap-4 md:gap-6 relative z-10">
+                    {[
+                      { letter: 'ق', latin: 'Qāf', delay: 0.3 },
+                      { letter: 'ر', latin: 'Rā', delay: 0.5 },
+                      { letter: 'أ', latin: 'Hamzah', delay: 0.7 }
+                    ].map((item) => (
+                      <motion.div key={item.latin} initial={{ opacity: 0, y: 20, scale: 0.8 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true }} transition={{ delay: item.delay, type: 'spring', stiffness: 200 }} className="flex flex-col items-center gap-2">
+                        <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center border border-deep-green/10 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300" style={{ background: 'linear-gradient(135deg, rgba(236,253,245,0.8), rgba(255,255,255,0.9))' }}>
+                          <span className="font-arabic text-4xl md:text-5xl text-deep-green">{item.letter}</span>
+                        </div>
+                        <span className="text-[10px] uppercase tracking-widest font-sans font-bold text-stone-400">{item.latin}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                  <div className="text-center relative z-10">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-soft/60 border border-deep-green/10">
+                      <span className="text-sm font-sans font-bold text-deep-green">= "Membaca" / "Bacaan"</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Stats Row */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+              {[
+                { number: '70', label: 'Sebutan Quran', icon: '📖' },
+                { number: '114', label: 'Surah', icon: '📜' },
+                { number: '6236', label: 'Ayat', icon: '✨' },
+                { number: '1400+', label: 'Tahun Terpelihara', icon: '🕌' },
+              ].map((stat, idx) => (
+                <motion.div key={stat.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.1 }} className="glass-card rounded-2xl p-6 text-center space-y-3 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden">
+                  <div className="absolute inset-0 shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                  <div className="text-2xl">{stat.icon}</div>
+                  <div className="text-3xl md:text-4xl font-display font-black relative z-10" style={{ background: 'linear-gradient(180deg, #0A4D38 20%, #D4A843 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{stat.number}</div>
+                  <div className="text-[10px] uppercase tracking-[0.3em] font-sans font-bold text-stone-400 relative z-10">{stat.label}</div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Quran Quote Banner */}
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative">
+              <div className="absolute -inset-3 rounded-3xl -z-10" style={{ background: 'linear-gradient(135deg, rgba(10,77,56,0.06), rgba(212,168,67,0.06))' }} />
+              <div className="rounded-3xl p-10 md:p-14 text-center space-y-6 border border-deep-green/5 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(236,253,245,0.4), rgba(255,248,231,0.4))' }}>
+                <div className="absolute inset-0 shimmer pointer-events-none opacity-50" />
+                <div className="relative z-10 space-y-6">
+                  <div className="flex items-center justify-center gap-4">
+                    <div className="ornament-line w-12" />
+                    <Sparkles className="w-4 h-4 text-gold" />
+                    <div className="ornament-line w-12" />
+                  </div>
+                  <div className="font-arabic text-3xl md:text-4xl text-deep-green leading-[2] dir-rtl" style={{ textShadow: '0 2px 12px rgba(10,77,56,0.1)' }}>
+                    إِنَّا نَحْنُ نَزَّلْنَا الذِّكْرَ وَإِنَّا لَهُ لَحَافِظُونَ
+                  </div>
+                  <div className="ornament-line w-24 mx-auto" />
+                  <p className="text-lg md:text-xl text-stone-600 italic font-serif max-w-2xl mx-auto leading-relaxed">
+                    "Sesungguhnya Kamilah yang menurunkan Al-Quran, dan sesungguhnya Kami benar-benar memeliharanya."
+                  </p>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 border border-stone-200/50 shadow-sm">
+                    <span className="text-[10px] uppercase tracking-[0.3em] font-sans font-bold text-gold">Surah Al-Hijr · 15:9</span>
+                  </div>
+                </div>
               </div>
+            </motion.div>
+
+            {/* Feature Grid */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {[
+                { icon: <Book className="w-6 h-6" />, title: 'Wahyu Ilahi', desc: 'Firman Allah SWT yang diturunkan kepada Nabi Muhammad ﷺ melalui Malaikat Jibril selama 23 tahun.' },
+                { icon: <Heart className="w-6 h-6" />, title: 'Pelindung Hati', desc: 'Al-Quran bukan sahaja panduan hidup, malah penawar dan penyembuh bagi setiap jiwa yang mencari ketenteraman.' },
+                { icon: <ExternalLink className="w-6 h-6" />, title: 'Mukjizat Linguistik', desc: 'Gaya bahasa Al-Quran yang unik tidak dapat ditandingi oleh mana-mana karya sastera, suatu cabaran yang kekal hingga hari ini.' },
+                { icon: <Sparkles className="w-6 h-6" />, title: 'Kekal Terpelihara', desc: 'Satu-satunya kitab suci yang terpelihara dalam bentuk asalnya selama lebih 1,400 tahun tanpa sebarang perubahan.' }
+              ].map((feature, idx) => (
+                <motion.div key={feature.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.1 }} className="group glass-card rounded-2xl p-8 space-y-4 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                  <div className="absolute inset-0 shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-deep-green relative z-10 group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, rgba(236,253,245,0.8), rgba(255,255,255,0.9))' }}>
+                    {feature.icon}
+                  </div>
+                  <h3 className="text-xl font-display font-bold text-stone-900 relative z-10">{feature.title}</h3>
+                  <p className="text-stone-500 leading-relaxed font-serif relative z-10">{feature.desc}</p>
+                </motion.div>
+              ))}
             </div>
           </div>
         </section>
