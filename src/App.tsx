@@ -595,6 +595,147 @@ export default function App() {
           </div>
         </section>
 
+        {/* Quran & Science Section */}
+        <section className="bg-parchment-dark py-32 px-8 relative overflow-hidden">
+          {/* Section divider */}
+          <div className="section-divider absolute top-0 left-0 right-0" />
+          {/* Decorative orbs */}
+          <div className="hero-orb absolute top-[10%] left-[-5%] w-[500px] h-[500px] bg-deep-green opacity-[0.04]" />
+          <div className="hero-orb absolute bottom-[20%] right-[-5%] w-[400px] h-[400px] bg-gold opacity-[0.04]" />
+
+          <div className="max-w-6xl mx-auto space-y-24">
+            {/* Section Header */}
+            <div className="text-center space-y-6">
+              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="space-y-6">
+                <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/70 backdrop-blur-sm border border-stone-200/60 shadow-card">
+                  <Sparkles className="w-4 h-4 text-gold" />
+                  <span className="text-[10px] uppercase tracking-[0.3em] font-sans font-bold text-stone-500">Keajaiban Ilmiah</span>
+                </div>
+                <h2 className="text-5xl md:text-7xl font-display font-bold tracking-tight leading-tight">
+                  <span className="gradient-text">Al-Quran & Sains</span>
+                </h2>
+                <p className="text-stone-500 max-w-2xl mx-auto text-lg italic leading-relaxed font-serif">
+                  Al-Quran mengandungi pelbagai isyarat saintifik yang diungkap lebih 1,400 tahun yang lalu, jauh sebelum sains moden menemui kebenarannya.
+                </p>
+                <div className="flex items-center justify-center gap-3">
+                  <div className="ornament-line w-16" />
+                  <div className="glow-dot animate-glow-pulse" />
+                  <div className="ornament-line w-16" />
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Intro Quote */}
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative">
+              <div className="absolute -inset-3 rounded-3xl -z-10" style={{ background: 'linear-gradient(135deg, rgba(10,77,56,0.06), rgba(212,168,67,0.06))' }} />
+              <div className="rounded-3xl p-10 md:p-12 text-center space-y-5 border border-deep-green/5 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(236,253,245,0.4), rgba(255,248,231,0.4))' }}>
+                <div className="absolute inset-0 shimmer pointer-events-none opacity-40" />
+                <div className="relative z-10 space-y-5">
+                  <div className="font-arabic text-2xl md:text-3xl text-deep-green leading-[2] dir-rtl" style={{ textShadow: '0 2px 12px rgba(10,77,56,0.1)' }}>
+                    سَنُرِيهِمْ آيَاتِنَا فِي الْآفَاقِ وَفِي أَنفُسِهِمْ حَتَّىٰ يَتَبَيَّنَ لَهُمْ أَنَّهُ الْحَقُّ
+                  </div>
+                  <div className="ornament-line w-20 mx-auto" />
+                  <p className="text-lg text-stone-600 italic font-serif max-w-2xl mx-auto leading-relaxed">
+                    "Kami akan perlihatkan kepada mereka tanda-tanda (kekuasaan) Kami di segenap ufuk dan pada diri mereka sendiri, sehingga jelaslah bagi mereka bahawa Al-Quran itu adalah benar."
+                  </p>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 border border-stone-200/50 shadow-sm">
+                    <span className="text-[10px] uppercase tracking-[0.3em] font-sans font-bold text-gold">Surah Fussilat · 41:53</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Science Cards */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[
+                {
+                  emoji: '🌌',
+                  title: 'Kejadian Alam Semesta',
+                  arabic: 'أَوَلَمْ يَرَ الَّذِينَ كَفَرُوا أَنَّ السَّمَاوَاتِ وَالْأَرْضَ كَانَتَا رَتْقًا فَفَتَقْنَاهُمَا',
+                  verse: 'Al-Anbiya 21:30',
+                  desc: 'Teori Ledakan Besar (Big Bang): Al-Quran menyatakan langit dan bumi pada mulanya bersatu, kemudian dipisahkan — selari dengan penemuan sains moden.'
+                },
+                {
+                  emoji: '🔬',
+                  title: 'Perkembangan Embrio',
+                  arabic: 'ثُمَّ خَلَقْنَا النُّطْفَةَ عَلَقَةً فَخَلَقْنَا الْعَلَقَةَ مُضْغَةً',
+                  verse: "Al-Mu'minun 23:14",
+                  desc: 'Al-Quran menggambarkan peringkat perkembangan embrio manusia dengan tepat — nutfah, alaqah, mudghah — berabad sebelum embriologi moden.'
+                },
+                {
+                  emoji: '🌊',
+                  title: 'Pemisah Dua Lautan',
+                  arabic: 'مَرَجَ الْبَحْرَيْنِ يَلْتَقِيَانِ ۝ بَيْنَهُمَا بَرْزَخٌ لَّا يَبْغِيَانِ',
+                  verse: 'Ar-Rahman 55:19-20',
+                  desc: 'Dua lautan bertemu tanpa bercampur — fenomena saintifik halokline yang dibuktikan oleh oseanografi moden.'
+                },
+                {
+                  emoji: '⛰️',
+                  title: 'Gunung Sebagai Pasak',
+                  arabic: 'وَالْجِبَالَ أَوْتَادًا',
+                  verse: "An-Naba' 78:7",
+                  desc: 'Al-Quran menyifatkan gunung sebagai "pasak" — sains moden mengesahkan gunung mempunyai akar dalam yang menstabilkan kerak bumi.'
+                },
+                {
+                  emoji: '🌍',
+                  title: 'Alam Semesta Mengembang',
+                  arabic: 'وَالسَّمَاءَ بَنَيْنَاهَا بِأَيْدٍ وَإِنَّا لَمُوسِعُونَ',
+                  verse: 'Adh-Dhariyat 51:47',
+                  desc: 'Al-Quran menyatakan alam semesta sentiasa mengembang — fakta yang hanya disahkan oleh Edwin Hubble pada tahun 1929.'
+                },
+                {
+                  emoji: '☄️',
+                  title: 'Besi dari Angkasa',
+                  arabic: 'وَأَنزَلْنَا الْحَدِيدَ فِيهِ بَأْسٌ شَدِيدٌ',
+                  verse: 'Al-Hadid 57:25',
+                  desc: 'Al-Quran menggunakan kata "diturunkan" untuk besi — sains moden membuktikan besi terbentuk dari bintang dan tiba di bumi melalui meteor.'
+                },
+              ].map((card, idx) => (
+                <motion.div
+                  key={card.title}
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.08 }}
+                  className="group glass-card rounded-2xl p-7 space-y-4 hover:-translate-y-2 transition-all duration-300 relative overflow-hidden"
+                >
+                  <div className="absolute inset-0 shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+
+                  {/* Emoji header */}
+                  <div className="flex items-center gap-3 relative z-10">
+                    <div className="text-3xl">{card.emoji}</div>
+                    <h3 className="text-lg font-display font-bold text-stone-900">{card.title}</h3>
+                  </div>
+
+                  {/* Arabic verse */}
+                  <div className="font-arabic text-xl text-deep-green leading-[2] dir-rtl py-2 px-4 rounded-xl relative z-10" style={{ background: 'rgba(236,253,245,0.4)' }}>
+                    {card.arabic}
+                  </div>
+
+                  {/* Verse reference */}
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/10 relative z-10">
+                    <span className="text-[9px] uppercase tracking-widest font-sans font-black text-gold">{card.verse}</span>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-sm text-stone-500 leading-relaxed font-serif relative z-10">{card.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Closing note */}
+            <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center space-y-4 max-w-2xl mx-auto">
+              <div className="flex items-center justify-center gap-3">
+                <div className="ornament-line w-12" />
+                <div className="w-1.5 h-1.5 rounded-full bg-gold/40" />
+                <div className="ornament-line w-12" />
+              </div>
+              <p className="text-stone-500 italic font-serif leading-relaxed">
+                Ini hanyalah sebahagian kecil daripada keajaiban saintifik dalam Al-Quran. Setiap penemuan baru menambahkan lagi bukti bahawa ia adalah wahyu daripada Pencipta alam semesta.
+              </p>
+            </motion.div>
+          </div>
+        </section>
         {/* Call to Action / Footer */}
         <footer className="py-24 px-8 text-center bg-parchment-dark relative overflow-hidden">
           {/* Section divider */}
