@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/afandiphd/public_html/quran70/
+    - /bin/cp -R dist/* $DEPLOYPATH
