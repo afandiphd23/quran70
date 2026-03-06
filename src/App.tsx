@@ -20,6 +20,7 @@ interface VerseData {
 
 export default function App() {
   const versesRef = useRef<HTMLElement>(null);
+  const etimologiRef = useRef<HTMLElement>(null);
   const [selectedVerse, setSelectedVerse] = useState<VerseReference | null>(null);
   const [verseData, setVerseData] = useState<VerseData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -30,6 +31,11 @@ export default function App() {
   const scrollToVerses = (e: React.MouseEvent) => {
     e.preventDefault();
     versesRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const scrollToEtimologi = (e: React.MouseEvent) => {
+    e.preventDefault();
+    etimologiRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
@@ -163,9 +169,9 @@ export default function App() {
           </div>
         </div>
         <div className="hidden md:flex gap-10 text-[10px] uppercase tracking-[0.2em] font-sans font-bold text-stone-400">
-          <a href="#" className="hover:text-gold transition-all duration-300 hover:tracking-[0.3em] relative group">Perkataan<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold group-hover:w-full transition-all duration-300 rounded-full" /></a>
+          <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="hover:text-gold transition-all duration-300 hover:tracking-[0.3em] relative group">Perkataan<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold group-hover:w-full transition-all duration-300 rounded-full" /></a>
           <a href="#verses" onClick={scrollToVerses} className="hover:text-gold transition-all duration-300 hover:tracking-[0.3em] relative group">Kemunculan<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold group-hover:w-full transition-all duration-300 rounded-full" /></a>
-          <a href="#" className="hover:text-gold transition-all duration-300 hover:tracking-[0.3em] relative group">Kepentingan<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold group-hover:w-full transition-all duration-300 rounded-full" /></a>
+          <a href="#etimologi" onClick={scrollToEtimologi} className="hover:text-gold transition-all duration-300 hover:tracking-[0.3em] relative group">Kepentingan<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold group-hover:w-full transition-all duration-300 rounded-full" /></a>
         </div>
       </nav>
 
@@ -328,7 +334,7 @@ export default function App() {
         </section>
 
         {/* Info Section - Etimologi & Makna */}
-        <section className="bg-white py-32 px-8 relative overflow-hidden">
+        <section ref={etimologiRef} id="etimologi" className="bg-white py-32 px-8 relative overflow-hidden">
           {/* Section divider */}
           <div className="section-divider absolute top-0 left-0 right-0" />
           {/* Subtle geometric pattern background */}
