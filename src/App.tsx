@@ -465,6 +465,133 @@ export default function App() {
                 </motion.div>
               ))}
             </div>
+
+            {/* Names of the Quran */}
+            <div className="space-y-10">
+              <div className="text-center space-y-4">
+                <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="space-y-4">
+                  <h3 className="text-3xl md:text-4xl font-display font-bold tracking-tight">
+                    <span className="gradient-text">Nama-Nama Al-Quran</span>
+                  </h3>
+                  <p className="text-stone-500 max-w-xl mx-auto italic font-serif">Al-Quran dikenali dengan pelbagai nama mulia dalam teks suci itu sendiri, setiap satunya mencerminkan sifat dan peranannya yang unik.</p>
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="ornament-line w-10" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-gold/40" />
+                    <div className="ornament-line w-10" />
+                  </div>
+                </motion.div>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  { arabic: 'الكِتَاب', name: 'Al-Kitāb', meaning: 'Kitab / Tulisan' },
+                  { arabic: 'الفُرْقَان', name: 'Al-Furqān', meaning: 'Pembeza' },
+                  { arabic: 'الذِّكْر', name: 'Al-Dhikr', meaning: 'Peringatan' },
+                  { arabic: 'النُّور', name: 'An-Nūr', meaning: 'Cahaya' },
+                  { arabic: 'الهُدَى', name: 'Al-Hudā', meaning: 'Petunjuk' },
+                  { arabic: 'الشِّفَاء', name: "Al-Shifa'", meaning: 'Penawar' },
+                  { arabic: 'الرَّحْمَة', name: 'Al-Raḥmah', meaning: 'Rahmat' },
+                  { arabic: 'المَوْعِظَة', name: "Al-Maw'iẓah", meaning: 'Nasihat' },
+                ].map((item, idx) => (
+                  <motion.div
+                    key={item.name}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: idx * 0.06 }}
+                    className="group glass-card rounded-2xl p-5 text-center space-y-3 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden cursor-default"
+                  >
+                    <div className="absolute inset-0 shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                    <div className="font-arabic text-3xl text-deep-green relative z-10 group-hover:scale-110 transition-transform duration-300" style={{ textShadow: '0 2px 8px rgba(10,77,56,0.08)' }}>
+                      {item.arabic}
+                    </div>
+                    <div className="text-xs font-sans font-bold text-stone-700 uppercase tracking-wider relative z-10">{item.name}</div>
+                    <div className="text-[10px] font-sans text-gold-dark/70 uppercase tracking-widest relative z-10">{item.meaning}</div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* Revelation Timeline */}
+            <div className="space-y-10">
+              <div className="text-center space-y-4">
+                <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="space-y-4">
+                  <h3 className="text-3xl md:text-4xl font-display font-bold tracking-tight">
+                    <span className="gradient-text">Kronologi Pewahyuan</span>
+                  </h3>
+                  <p className="text-stone-500 max-w-xl mx-auto italic font-serif">Perjalanan 23 tahun penurunan wahyu, dari Gua Hira' hingga penyempurnaan agama di Arafah.</p>
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="ornament-line w-10" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-gold/40" />
+                    <div className="ornament-line w-10" />
+                  </div>
+                </motion.div>
+              </div>
+
+              <div className="relative">
+                {/* Timeline line */}
+                <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px md:-translate-x-px" style={{ background: 'linear-gradient(180deg, rgba(212,168,67,0.4), rgba(10,77,56,0.2), rgba(212,168,67,0.4))' }} />
+
+                <div className="space-y-8">
+                  {[
+                    { year: '610 M', title: 'Wahyu Pertama', desc: 'Surah Al-Alaq (96:1-5) diturunkan di Gua Hira\' — "Bacalah dengan nama Tuhanmu yang menciptakan."', side: 'left' },
+                    { year: '613 M', title: 'Dakwah Terbuka', desc: 'Nabi Muhammad ﷺ mula berdakwah secara terbuka kepada masyarakat Makkah setelah 3 tahun dakwah secara rahsia.', side: 'right' },
+                    { year: '622 M', title: 'Hijrah ke Madinah', desc: 'Perpindahan ke Madinah menandakan era baru, di mana banyak surah berkaitan undang-undang dan masyarakat diturunkan.', side: 'left' },
+                    { year: '630 M', title: 'Pembukaan Makkah', desc: 'Fath Makkah — kemenangan besar yang disertai penurunan Surah An-Nasr, menandakan kejayaan Islam.', side: 'right' },
+                    { year: '632 M', title: 'Wahyu Terakhir', desc: 'Surah Al-Mā\'idah (5:3) — "Pada hari ini Aku telah sempurnakan agamamu dan cukupkan nikmat-Ku kepadamu."', side: 'left' },
+                  ].map((event, idx) => (
+                    <motion.div
+                      key={event.year}
+                      initial={{ opacity: 0, x: event.side === 'left' ? -30 : 30 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: idx * 0.1, duration: 0.6 }}
+                      className={`relative flex items-start gap-6 ${event.side === 'right' ? 'md:flex-row-reverse md:text-right' : ''}`}
+                    >
+                      {/* Dot on timeline */}
+                      <div className="absolute left-6 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full border-2 border-gold bg-parchment z-10 shadow-sm" style={{ top: '6px' }} />
+
+                      {/* Content */}
+                      <div className={`ml-14 md:ml-0 md:w-[calc(50%-2rem)] ${event.side === 'right' ? 'md:mr-auto md:pl-10' : 'md:ml-auto md:pr-10'}`}>
+                        <div className="glass-card rounded-2xl p-6 space-y-2 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden">
+                          <div className="absolute inset-0 shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/10 relative z-10">
+                            <span className="text-[10px] uppercase tracking-widest font-sans font-black text-gold">{event.year}</span>
+                          </div>
+                          <h4 className="text-lg font-display font-bold text-stone-900 relative z-10">{event.title}</h4>
+                          <p className="text-sm text-stone-500 leading-relaxed font-serif relative z-10">{event.desc}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Second Quran Quote */}
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative">
+              <div className="absolute -inset-3 rounded-3xl -z-10" style={{ background: 'linear-gradient(135deg, rgba(212,168,67,0.06), rgba(10,77,56,0.06))' }} />
+              <div className="rounded-3xl p-10 md:p-14 text-center space-y-6 border border-gold/10 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(255,248,231,0.5), rgba(236,253,245,0.3))' }}>
+                <div className="absolute inset-0 shimmer pointer-events-none opacity-40" />
+                <div className="relative z-10 space-y-6">
+                  <div className="flex items-center justify-center gap-4">
+                    <div className="ornament-line w-12" />
+                    <Sparkles className="w-4 h-4 text-gold" />
+                    <div className="ornament-line w-12" />
+                  </div>
+                  <div className="font-arabic text-3xl md:text-4xl text-deep-green leading-[2] dir-rtl" style={{ textShadow: '0 2px 12px rgba(10,77,56,0.1)' }}>
+                    إِنْ هُوَ إِلَّا ذِكْرٌ لِّلْعَالَمِينَ
+                  </div>
+                  <div className="ornament-line w-24 mx-auto" />
+                  <p className="text-lg md:text-xl text-stone-600 italic font-serif max-w-2xl mx-auto leading-relaxed">
+                    "Al-Quran itu tidak lain hanyalah peringatan bagi seluruh alam."
+                  </p>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 border border-stone-200/50 shadow-sm">
+                    <span className="text-[10px] uppercase tracking-[0.3em] font-sans font-bold text-gold">Surah At-Takwir · 81:27</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
           </div>
         </section>
 
